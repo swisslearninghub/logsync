@@ -1,0 +1,36 @@
+{
+  "syslog": {
+    "address": "<host>:<port>",
+    "proto": "tcp",
+    "tag": "logsync",
+    "facility": 32
+  },
+  "oauth2": {
+    "client_id": "<provided>",
+    "secret": "<provided>",
+    "token_url": "<provided>",
+    "context_url": "<provided>"
+  },
+  "filter": {
+    "type": [],
+    "days": 1,
+    "max": 999999
+  },
+  "logfile": "/optional/path/to/file.log",
+  "detections": [
+    {
+      "class_id": "logged_in",
+      "name": "User login",
+      "severity": 1,
+      "loglevel": 6,
+      "reporters": [
+        {
+          "type": "type",
+          "config": {
+            "type": "LOGIN"
+          }
+        }
+      ]
+    }
+  ]
+}
