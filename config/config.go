@@ -39,7 +39,7 @@ type Config struct {
 	} `json:"oauth2"`
 	Filter struct {
 		Type []string `json:"type"`
-		Days int      `json:"days" validate:"required,gt=0,lte=90"`
+		Days int      `json:"days" validate:"required,gt=0,lte=7"`
 		Max  int      `json:"max"  validate:"required,gt=0,lte=999999"`
 	} `json:"filter"`
 	Detections []Detection `json:"detections" validate:"required,gt=0"`

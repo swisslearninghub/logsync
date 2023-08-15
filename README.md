@@ -46,7 +46,7 @@ Filter are used to limit queried events from SLH. The `days` parameter is mandat
 
 | Attribute | Type         | Info                                                    |
 |-----------|:-------------|---------------------------------------------------------|
-| `days`    | `<int>`      | Days to fetch events from (`1-90`)                      |
+| `days`    | `<int>`      | Days to fetch events from (`1-7`)                       |
 | `type`    | `[]<string>` | Optional: Limit events to this array of types.          |
 | `max`     | `<int>`      | Optional: Maximum entries to retrieve (default: 999999) |
 
