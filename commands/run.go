@@ -15,6 +15,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/swisslearninghub/logsync/api"
 	"github.com/swisslearninghub/logsync/cefsyslog"
@@ -27,6 +28,8 @@ import (
 	"path/filepath"
 	"time"
 )
+
+const logPerm = 0644
 
 // CmdRun ...
 type CmdRun struct {
@@ -104,7 +107,7 @@ func (cmd *CmdRun) action(c *cli.Context) error {
 
 	defer cmd.close()
 
-	log.Println("Starting " + c.App.Name)
+	log.Printf("Starting %s %s\n", c.App.Name, c.App.Version)
 
 	log.Printf("[Option] dryRun: %v\n", c.Bool(flagDryRun))
 
@@ -121,6 +124,15 @@ func (cmd *CmdRun) action(c *cli.Context) error {
 	}
 
 	log.Printf("Retrieved %d event(s)\n", len(events))
+
+	bs, _ := json.MarshalIndent(&events, "", "  ")
+	_ = os.WriteFile("temp.json", bs, logPerm)
+
+	log.Println("Internal prefiltering")
+
+	events = cmd.filterReauth(events)
+
+	log.Printf("Iterating over %d event(s)\n", len(events))
 
 	if len(events) == 0 {
 		log.Println("Exiting")
@@ -139,7 +151,41 @@ func (cmd *CmdRun) action(c *cli.Context) error {
 	return nil
 }
 
-// report handles configuret report checks and returns *CEF if needed. nil otherwise
+// filterReauth drops any subsequent LOGINs (internal client reauth) for same sessionID
+func (cmd *CmdRun) filterReauth(reps []api.EventRepresentation) []api.EventRepresentation {
+	var repsNew []api.EventRepresentation
+	sess := cmd.uniqueSess(reps)
+	for _, rep := range reps {
+		if rep.IsLogin() {
+			if r, ok := sess[*rep.SessionID]; ok {
+				repsNew = append(repsNew, r)
+				delete(sess, *rep.SessionID)
+			}
+			continue
+		}
+		repsNew = append(repsNew, rep)
+	}
+	return repsNew
+}
+
+func (cmd *CmdRun) uniqueSess(reps []api.EventRepresentation) map[string]api.EventRepresentation {
+	m := map[string]api.EventRepresentation{}
+	for _, rep := range reps {
+		if rep.IsLogin() {
+			r, ok := m[*rep.SessionID]
+			if !ok {
+				m[*rep.SessionID] = rep
+				continue
+			}
+			if rep.Time < r.Time {
+				m[*rep.SessionID] = rep
+			}
+		}
+	}
+	return m
+}
+
+// report handles configured report checks and returns *CEF if needed. nil otherwise
 func (cmd *CmdRun) report(er api.EventRepresentation, dryRun bool) int {
 	reported := 0
 	for _, detection := range cmd.cfg.Detections {
@@ -228,7 +274,7 @@ func (cmd *CmdRun) setLogging() error {
 	return nil
 }
 
-// setLogging initializes http app
+// setAPI initializes api
 func (cmd *CmdRun) setAPI() error {
 	var err error
 	cmd.api, err = api.NewAPI(
@@ -240,7 +286,7 @@ func (cmd *CmdRun) setAPI() error {
 	return err
 }
 
-// setLogging initializes syslog client
+// setSyslog initializes syslog client
 func (cmd *CmdRun) setSyslog() error {
 	var err error
 	cmd.ceflog, err = cefsyslog.SyslogWriterDial(

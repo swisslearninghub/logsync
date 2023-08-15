@@ -37,7 +37,7 @@ See `logsync.json` schema [here](logsync.dist.json). For more details also see [
 ## Local Logging (Optional)
 
 By default, output is written to StdOut. Configuration setting `logfile` can be configured to also write to file. File
-itself is getting created if not already exists (permissions `0600`). The directory must exist and will not be created
+itself is getting created if not already exists (permissions `0644`). The directory must exist and will not be created
 automatically.
 
 ## Filter
@@ -46,7 +46,7 @@ Filter are used to limit queried events from SLH. The `days` parameter is mandat
 
 | Attribute | Type         | Info                                                    |
 |-----------|:-------------|---------------------------------------------------------|
-| `days`    | `<int>`      | Days to fetch events from (`1-7`)                       |
+| `days`    | `<int>`      | Days to fetch events from (`1-90`)                      |
 | `type`    | `[]<string>` | Optional: Limit events to this array of types.          |
 | `max`     | `<int>`      | Optional: Maximum entries to retrieve (default: 999999) |
 

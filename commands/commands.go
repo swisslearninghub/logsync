@@ -30,7 +30,7 @@ const (
 func Run(args []string) error {
 	app := cli.NewApp()
 	app.Name = "logsync"
-	app.Version = "1.0.0"
+	app.Version = "1.0.1"
 	app.Usage = "Event Forwarding"
 	app.Copyright = "Swiss Learning Hub AG"
 	app.Commands = []*cli.Command{

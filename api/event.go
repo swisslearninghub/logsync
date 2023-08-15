@@ -14,6 +14,13 @@
 
 package api
 
+import "strings"
+
+const (
+	eventTypeLogin = "LOGIN"
+	detailIdentity = "identity_provider_identity"
+)
+
 // EventRepresentation is a representation of an event
 type EventRepresentation struct {
 	Time      int64             `json:"time,omitempty"`
@@ -41,4 +48,15 @@ func (r *EventRepresentation) GetDetail(key, defaultValue string) string {
 		return defaultValue
 	}
 	return r.Details[key]
+}
+
+func (r *EventRepresentation) IsLogin() bool {
+	if r.Type == nil {
+		return false
+	}
+	return strings.EqualFold(*r.Type, eventTypeLogin)
+}
+
+func (r *EventRepresentation) HasIdentity() bool {
+	return r.GetDetail(detailIdentity, "") != ""
 }

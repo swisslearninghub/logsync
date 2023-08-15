@@ -7,7 +7,6 @@ replace (
 	github.com/swisslearninghub/logsync/cefsyslog => ./cefsyslog
 	github.com/swisslearninghub/logsync/commands => ./commands
 	github.com/swisslearninghub/logsync/config => ./config
-	github.com/swisslearninghub/logsync/event => ./event
 )
 
 require (

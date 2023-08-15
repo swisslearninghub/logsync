@@ -27,7 +27,7 @@ import (
 	"time"
 )
 
-const httpTimeout = 10 * time.Second
+const httpTimeout = 60 * time.Second
 
 const (
 	QueryParamFrom  = "dateFrom"

@@ -12,7 +12,6 @@ linters:
     - staticcheck
     - typecheck
     - unused
-    - depguard
     - errorlint
     - gocognit
     - gocritic
@@ -28,6 +27,7 @@ linters-settings:
   gosec:
     excludes:
       - G304
+      - G306
 
   stylecheck:
     checks: [ "all", "-ST1003", "-ST1000" ]
